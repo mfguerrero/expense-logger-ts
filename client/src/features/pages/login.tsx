@@ -6,7 +6,7 @@ import { useStyles } from "./login.style";
 
 import { login } from "../../redux/auth/reducer";
 
-export const LoginPage = () => {
+export const LoginPage: React.FC = () => {
   const classes = useStyles();
   const dispatch = useAppDispatch();
   const [credentials, setCredentials] = useState({ email: "", password: "" });

@@ -11,7 +11,7 @@ import { loadExpenses } from "../../redux/expenses/reducer";
 const Expenses: React.FC = () => {
   const classes = useStyles();
   const dispatch = useAppDispatch();
-  const { loading, expenses } = useAppSelector(visibleExpenses);
+  const { executing, expenses } = useAppSelector(visibleExpenses);
 
   useEffect(() => {
     dispatch(loadExpenses());
@@ -27,8 +27,8 @@ const Expenses: React.FC = () => {
             <div>Amount</div>
           </div>
           <div className={classes.body}>
-            {loading && <Spinner />}
-            {!loading &&
+            {executing && <Spinner />}
+            {!executing &&
               (expenses.length === 0 ? (
                 <div className={classes.noitems}>
                   <span>No Expenses</span>

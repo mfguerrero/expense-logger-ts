@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { DateTime } from "luxon";
 import { TextField, Select, MenuItem, FormControl, InputLabel, IconButton } from "@material-ui/core";
@@ -6,22 +6,32 @@ import DownIcon from "@material-ui/icons/ArrowDownward";
 import UpIcon from "@material-ui/icons/ArrowUpward";
 import Container from "../../components/layout/container";
 import { useStyles } from "./filters.style";
+import { useDebounce } from "../../hooks";
 
 import { setMatch, setOrder, setStartDate, setEndDate, toggleAsc } from "../../redux/filters/reducer";
 
-const Filters = () => {
+const Filters: React.FC = () => {
   const classes = useStyles();
   const dispatch = useAppDispatch();
 
-  const match = useAppSelector((state) => state.filters.match);
+  // const match = useAppSelector((state) => state.filters.match);
+  const [search, setSearch] = useState("");
   const startDate = useAppSelector((state) => state.filters.startDate);
   const endDate = useAppSelector((state) => state.filters.endDate);
   const orderBy = useAppSelector((state) => state.filters.orderBy);
   const asc = useAppSelector((state) => state.filters.asc);
 
   const searchChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setMatch(event.target.value));
+    setSearch(event.target.value);
   };
+
+  useDebounce(
+    () => {
+      dispatch(setMatch(search));
+    },
+    300,
+    [search]
+  );
 
   const startDateChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -51,7 +61,7 @@ const Filters = () => {
               variant="outlined"
               className={classes.inputField}
               label="search"
-              value={match}
+              value={search}
               onChange={searchChangeHandler}
             />
           </div>

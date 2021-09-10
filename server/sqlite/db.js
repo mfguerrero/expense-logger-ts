@@ -58,7 +58,7 @@ export const addExpense = (user, description, amount, date, comments) => {
         reject(err);
       } else {
         const { id } = row;
-        resolve({ id, user, description, amount, date, comments });
+        resolve({ id, description, amount, date, comments });
       }
     });
     db.close();
@@ -70,7 +70,7 @@ export const updateExpense = (id, description, amount, date, comments) => {
     let db = new sqlite3.Database(dbPath);
     db.run(UPDATE_EXPENSE, [description, amount, date, comments, id], (err) => {
       if (err) reject(err);
-      else resolve(true);
+      else resolve({ id, description, amount, date, comments });
     });
     db.close();
   });

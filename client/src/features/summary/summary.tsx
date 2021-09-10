@@ -1,23 +1,33 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
 import { Button } from "@material-ui/core";
 import numeral from "numeral";
 import Container from "../../components/layout/container";
 import { useStyles } from "./summary.style";
-
+import { setCurrentExpense } from "../../redux/expenses/reducer";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { summary } from "../../redux/expenses/selectors";
+import { DateTime } from "luxon";
 
 const Summary = () => {
   const classes = useStyles();
-  const history = useHistory();
-
-  const { count, total } = useSelector(summary);
+  const dispatch = useAppDispatch();
+  const { count, total } = useAppSelector(summary);
 
   const formattedTotal = numeral(total / 100).format("$0,0.00");
 
   const addExpenseClickHandler = () => {
-    history.push("/create");
+    dispatch(
+      setCurrentExpense({
+        executing: false,
+        expense: {
+          description: "",
+          amount: 0,
+          date: DateTime.now().toISODate(),
+          comments: "",
+        },
+      })
+    );
+    window.nav.push("/manage");
   };
 
   return (
