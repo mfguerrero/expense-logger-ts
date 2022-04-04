@@ -40,6 +40,26 @@ export const registerUser = async (req, res) => {
   }
 };
 
+const getJsonWebToken = (user) =>
+  new Promise((resolve, reject) => {
+    const payload = {
+      user: {
+        id: user.id,
+      },
+    };
+    jwt.sign(
+      payload,
+      secret,
+      {
+        expiresIn: tokeExp,
+      },
+      (error, token) => {
+        if (error) reject(error);
+        resolve(token);
+      }
+    );
+  });
+
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -47,26 +67,11 @@ export const loginUser = async (req, res) => {
     if (user) {
       const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
-        const payload = {
-          user: {
-            id: user.id,
-          },
-        };
-        jwt.sign(
-          payload,
-          secret,
-          {
-            expiresIn: tokeExp,
-          },
-          (error, token) => {
-            if (error) throw error;
-            return successResponse(res, { token }, 200);
-          }
-        );
+        const token = await getJsonWebToken(user);
+        return successResponse(res, { token }, 200);
       }
-    } else {
-      return errorResponse(res, "invalid credentials!");
     }
+    return errorResponse(res, "invalid credentials!");
   } catch (error) {
     return errorResponse(res, error);
   }
